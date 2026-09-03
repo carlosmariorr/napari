@@ -19,6 +19,7 @@ from napari.layers.utils._link_layers import get_linked_layers
 from napari.utils.notifications import show_warning
 
 if TYPE_CHECKING:
+    from collections.abc import Collection
     from napari.components import LayerList
     from napari.types import ArrayLike
 
@@ -270,6 +271,23 @@ def _project(ll: LayerList, axis: int = 0, mode: str = 'max') -> None:
     )
 
     ll.append(new)
+
+
+def extract_multiscale_level(
+    layers: Collection[Image | Labels], level: int | None = None
+) -> None:
+    return
+
+
+def _extract_data_level_to_layer(ll: LayerList) -> None:
+    if all(layer.multiscale for layer in ll.selection):
+        layers = tuple(
+            layer
+            for layer in ll.selection
+            if isinstance(layer, (Image, Labels)) and layer.multiscale
+        )
+        extract_multiscale_level(layers)
+    return
 
 
 def _toggle_bounding_box(ll: LayerList) -> None:
