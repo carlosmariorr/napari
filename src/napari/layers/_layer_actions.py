@@ -275,8 +275,28 @@ def _project(ll: LayerList, axis: int = 0, mode: str = 'max') -> None:
 
 def extract_multiscale_level(
     layers: Collection[Image | Labels], level: int | None = None
-) -> None:
-    return
+) -> list[Layer]:
+    new_layers: list[Layer] = []
+    for layer in layers:
+        extracting_data_level = layer.data_level if level is None else level
+
+        layer_state = layer._get_state()
+        layer_state.pop('data', None)
+        layer_state['name'] = f'{layer.name}-level({extracting_data_level})'
+        layer_state['multiscale'] = False
+
+        if isinstance(layer, Image):
+            layer_state['locked_data_level'] = None
+
+        new_layers.append(
+            Layer.create(
+                layer.data[extracting_data_level],
+                layer_state,
+                layer._type_string,
+            )
+        )
+
+    return new_layers
 
 
 def _extract_data_level_to_layer(ll: LayerList) -> None:
