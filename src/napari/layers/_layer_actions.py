@@ -303,7 +303,7 @@ def extract_multiscale_level(
     return new_layers
 
 
-def _extract_data_level_to_layer(ll: LayerList, level: int) -> None:
+def _extract_data_level_to_layer(ll: LayerList, level: int | None) -> None:
     if not ll.selection or not all(
         isinstance(layer, (Image, Labels)) and layer.multiscale
         for layer in ll.selection

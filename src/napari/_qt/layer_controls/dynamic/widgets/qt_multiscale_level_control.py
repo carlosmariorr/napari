@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 from qtpy.QtWidgets import QComboBox, QHBoxLayout, QWidget
 
-from napari.layers._layer_actions import extract_multiscale_level
+from napari._app_model import get_app_model
 from napari._qt.layer_controls.dynamic.widgets.qt_widget_controls_base import (
     QtWidgetControlsBase,
     QtWrappedLabel,
@@ -171,15 +171,10 @@ class QtMultiscaleLevelControl(QtWidgetControlsBase):
 
     def _on_extract_data_level_button_pressed(self) -> None:
         """Extract the data levels of the layers to new layers using the _layer_actions methods"""
-        layers = tuple(
-            layer
-            for layer in self._layers
-            if isinstance(layer, (Image, Labels)) and layer.multiscale
+        get_app_model().commands.execute_command(
+            'napari.layer.extract_multiscale_level',
+            level=self.level_combobox.currentData(),
         )
-        if self.level_combobox.currentData() is None:
-            extract_multiscale_level(layers)
-        else:
-            extract_multiscale_level(layers, self.level_combobox.currentData())
 
     def get_widget_controls(
         self,
