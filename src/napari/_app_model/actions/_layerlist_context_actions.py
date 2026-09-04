@@ -303,6 +303,11 @@ LAYERLIST_CONTEXT_ACTIONS: list[Action] = [
             get_current=_layer_actions._are_name_overlays_visible
         ),
     ),
+    Action(
+        id='napari.layer.extract_multiscale_level',
+        title='Extract multiscale level',
+        callback=_layer_actions._extract_data_level_to_layer,
+    ),
 ]
 
 for _dtype in (

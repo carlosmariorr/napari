@@ -303,7 +303,7 @@ def extract_multiscale_level(
     return new_layers
 
 
-def _extract_data_level_to_layer(ll: LayerList) -> None:
+def _extract_data_level_to_layer(ll: LayerList, level: int) -> None:
     if not ll.selection or not all(
         isinstance(layer, (Image, Labels)) and layer.multiscale
         for layer in ll.selection
@@ -317,7 +317,7 @@ def _extract_data_level_to_layer(ll: LayerList) -> None:
         layer for layer in ll.selection if isinstance(layer, (Image, Labels))
     )
 
-    adding_layers = extract_multiscale_level(layers)
+    adding_layers = extract_multiscale_level(layers, level)
     for layer, new_layer in zip(layers, adding_layers, strict=True):
         ll.insert(ll.index(layer) + 1, new_layer)
 
