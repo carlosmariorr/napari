@@ -284,6 +284,10 @@ def extract_multiscale_level(
         layer_state.pop('data', None)
         layer_state['name'] = f'{layer.name}-level({extracting_data_level})'
         layer_state['multiscale'] = False
+        layer_state['scale'] = (
+            np.asarray(layer_state['scale'])
+            * layer.downsample_factors[extracting_data_level]
+        ).tolist()
 
         if isinstance(layer, Image):
             layer_state['locked_data_level'] = None
@@ -300,13 +304,23 @@ def extract_multiscale_level(
 
 
 def _extract_data_level_to_layer(ll: LayerList) -> None:
-    if all(layer.multiscale for layer in ll.selection):
-        layers = tuple(
-            layer
-            for layer in ll.selection
-            if isinstance(layer, (Image, Labels)) and layer.multiscale
+    if not ll.selection or not all(
+        isinstance(layer, (Image, Labels)) and layer.multiscale
+        for layer in ll.selection
+    ):
+        show_warning(
+            'Only multiscale Image and Labels layers can extract data levels'
         )
-        extract_multiscale_level(layers)
+        return
+
+    layers = tuple(
+        layer for layer in ll.selection if isinstance(layer, (Image, Labels))
+    )
+
+    adding_layers = extract_multiscale_level(layers)
+    for layer, new_layer in zip(layers, adding_layers, strict=True):
+        ll.insert(ll.index(layer) + 1, new_layer)
+
     return
 
 
