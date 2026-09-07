@@ -9,7 +9,7 @@ from napari.layers._layer_actions import (
     _convert,
     _convert_dtype,
     _duplicate_layer,
-    _extract_data_level_to_layer,
+    _extract_multiscale_level_from_selection,
     _hide_selected,
     _hide_unselected,
     _link_selected_layers,
@@ -529,7 +529,7 @@ def test_extract_multiscale_level(layer_type, level, expected_level):
 
 
 @pytest.mark.parametrize('layer_type', [Image, Labels])
-def test_extract_data_level_to_layer(layer_type):
+def test_extract_multiscale_level_from_selection(layer_type):
     data = (
         np.zeros((16, 16), dtype=int),
         np.zeros((8, 8), dtype=int),
@@ -545,7 +545,7 @@ def test_extract_data_level_to_layer(layer_type):
     ll = LayerList(layers)
     ll.selection = {layers[index] for index in multiscale_layers_indexes}
 
-    _extract_data_level_to_layer(ll, level=1)
+    _extract_multiscale_level_from_selection(ll, level=1)
 
     assert len(ll) == len(layers) + len(multiscale_layers_indexes)
     for offset, layer_index in enumerate(multiscale_layers_indexes):
@@ -558,7 +558,9 @@ def test_extract_data_level_to_layer(layer_type):
         )
 
 
-def test_extract_data_level_to_layer_invalid_selection(monkeypatch):
+def test_extract_multiscale_level_from_selection_invalid_selection(
+    monkeypatch,
+):
     data = (
         np.zeros((16, 16), dtype=int),
         np.zeros((8, 8), dtype=int),
@@ -574,7 +576,7 @@ def test_extract_data_level_to_layer_invalid_selection(monkeypatch):
     ll = LayerList(layers)
     ll.selection = set(layers)
 
-    _extract_data_level_to_layer(ll, level=1)
+    _extract_multiscale_level_from_selection(ll, level=1)
 
     assert len(ll) == len(layers)
     assert list(ll) == layers

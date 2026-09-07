@@ -303,7 +303,7 @@ def extract_multiscale_level(
     return new_layers
 
 
-def _extract_data_level_to_layer(
+def _extract_multiscale_level_from_selection(
     ll: LayerList, level: int | None = None
 ) -> None:
     if not ll.selection or not all(
