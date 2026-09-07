@@ -10,9 +10,8 @@ from napari._qt.layer_controls.dynamic.widgets.qt_widget_controls_base import (
 )
 from napari._qt.utils import qt_signals_blocked
 from napari._qt.widgets.qt_mode_buttons import QtModePushButton
-from napari.utils.misc import human_readable_size
-
 from napari.layers import Image, Labels
+from napari.utils.misc import human_readable_size
 
 
 def _format_level_label(

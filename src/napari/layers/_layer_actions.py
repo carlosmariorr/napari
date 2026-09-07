@@ -20,6 +20,7 @@ from napari.utils.notifications import show_warning
 
 if TYPE_CHECKING:
     from collections.abc import Collection
+
     from napari.components import LayerList
     from napari.types import ArrayLike
 
