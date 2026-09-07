@@ -520,6 +520,7 @@ def test_extract_multiscale_level(layer_type, level, expected_level):
 
     np.testing.assert_array_equal(new_layer.data, data[expected_level])
     assert not new_layer.multiscale
+    assert new_layer.locked_data_level is None  # type: ignore
     assert new_layer.name == f'{layer_name}-level({expected_level})'
     np.testing.assert_array_equal(
         new_layer.scale,
@@ -555,3 +556,28 @@ def test_extract_data_level_to_layer(layer_type):
         assert ll[extracted_index].name == (
             f'{layers[layer_index].name}-level(1)'
         )
+
+
+def test_extract_data_level_to_layer_invalid_selection(monkeypatch):
+    data = (
+        np.zeros((16, 16), dtype=int),
+        np.zeros((8, 8), dtype=int),
+    )
+    layers = [Points(), Image(data=data)]
+
+    warnings = []
+    monkeypatch.setattr(
+        'napari.layers._layer_actions.show_warning',
+        warnings.append,
+    )
+
+    ll = LayerList(layers)
+    ll.selection = set(layers)
+
+    _extract_data_level_to_layer(ll, level=1)
+
+    assert len(ll) == len(layers)
+    assert list(ll) == layers
+    assert warnings == [
+        'Only multiscale Image and Labels layers can extract data levels'
+    ]
