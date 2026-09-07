@@ -9,6 +9,7 @@ from napari.layers._layer_actions import (
     _convert,
     _convert_dtype,
     _duplicate_layer,
+    _extract_data_level_to_layer,
     _hide_selected,
     _hide_unselected,
     _link_selected_layers,
@@ -524,3 +525,33 @@ def test_extract_multiscale_level(layer_type, level, expected_level):
         new_layer.scale,
         np.asarray(layer.scale) * layer.downsample_factors[expected_level],
     )
+
+
+@pytest.mark.parametrize('layer_type', [Image, Labels])
+def test_extract_data_level_to_layer(layer_type):
+    data = (
+        np.zeros((16, 16), dtype=int),
+        np.zeros((8, 8), dtype=int),
+    )
+    multiscale_layers_indexes = [0, 2]
+    layers = [
+        layer_type(data, name='test_layer1'),
+        Points(),
+        layer_type(data, name='test_layer2'),
+        Shapes(),
+    ]
+
+    ll = LayerList(layers)
+    ll.selection = {layers[index] for index in multiscale_layers_indexes}
+
+    _extract_data_level_to_layer(ll, level=1)
+
+    assert len(ll) == len(layers) + len(multiscale_layers_indexes)
+    for offset, layer_index in enumerate(multiscale_layers_indexes):
+        original_index = layer_index + offset
+        extracted_index = original_index + 1
+
+        assert ll[original_index] is layers[layer_index]
+        assert ll[extracted_index].name == (
+            f'{layers[layer_index].name}-level(1)'
+        )
