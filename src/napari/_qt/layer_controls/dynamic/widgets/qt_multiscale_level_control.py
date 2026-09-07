@@ -76,7 +76,7 @@ class QtMultiscaleLevelControl(QtWidgetControlsBase):
 
         self.level_extraction_button = QtModePushButton(
             layer=layers[0],
-            button_name='histogram',
+            button_name='extract_multiscale',
             tooltip='Extract selected data level to new layer',
             slot=self._on_extract_data_level_button_pressed,
         )
