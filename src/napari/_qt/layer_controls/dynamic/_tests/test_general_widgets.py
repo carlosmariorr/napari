@@ -369,15 +369,19 @@ class TestQtMultiscaleLevelControl:
 
         assert image.locked_data_level is None
         assert control.level_combobox.currentIndex() == 0
+        assert control.level_extraction_button.isEnabled() is False
 
         image.locked_data_level = 0
         assert control.level_combobox.currentIndex() == 1
+        assert control.level_extraction_button.isEnabled() is True
 
         control.level_combobox.setCurrentIndex(2)
         assert image.locked_data_level == 1
+        assert control.level_extraction_button.isEnabled() is True
 
         image.locked_data_level = None
         assert control.level_combobox.currentIndex() == 0
+        assert control.level_extraction_button.isEnabled() is False
 
     def test_mismatched_multiscale_shapes(self, qt_wrap: QtWrap) -> None:
         image1 = Image([np.zeros((10, 10)), np.zeros((5, 5))])
