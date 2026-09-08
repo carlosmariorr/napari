@@ -76,7 +76,6 @@ class QtMultiscaleLevelControl(QtWidgetControlsBase):
         self.level_extraction_button = QtModePushButton(
             layer=layers[0],
             button_name='extract_multiscale',
-            tooltip='Extract selected data level to new layer',
             slot=self._on_extract_data_level_button_pressed,
         )
         self.level_combobox = QComboBox(parent)
@@ -138,6 +137,7 @@ class QtMultiscaleLevelControl(QtWidgetControlsBase):
             else:
                 self.level_combobox.setCurrentIndex(0)
 
+            self._update_extraction_button_state()
             self._update_auto_label()
 
     def _update_auto_label(self) -> None:
@@ -159,6 +159,25 @@ class QtMultiscaleLevelControl(QtWidgetControlsBase):
         for layer in self._layers:
             layer.locked_data_level = level
 
+        self._update_auto_label()
+
+    def _update_extraction_button_state(self) -> None:
+        """Update the extraction button to enabled or disabled based on
+        the layer's locked data levels.
+        """
+        if self._layers and all(
+            layer.locked_data_level is not None for layer in self._layers
+        ):
+            self.level_extraction_button.setEnabled(True)
+            self.level_extraction_button.setToolTip(
+                'Extract locked resolution level to new layer'
+            )
+        else:
+            self.level_extraction_button.setEnabled(False)
+            self.level_extraction_button.setToolTip(
+                'All selected layers must have a locked resolution to extract level'
+            )
+
     def _on_locked_data_level_change(self) -> None:
         """Sync the combobox when locked_data_level is set programmatically."""
         locked = self._layers[0].locked_data_level
@@ -167,6 +186,7 @@ class QtMultiscaleLevelControl(QtWidgetControlsBase):
                 self.level_combobox.setCurrentIndex(locked + 1)
             else:
                 self.level_combobox.setCurrentIndex(0)
+        self._update_extraction_button_state()
 
     def _on_extract_data_level_button_pressed(self) -> None:
         """Extract the data levels of the layers to new layers using the _layer_actions methods"""
