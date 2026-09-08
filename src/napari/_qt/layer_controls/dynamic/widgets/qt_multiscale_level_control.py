@@ -165,8 +165,13 @@ class QtMultiscaleLevelControl(QtWidgetControlsBase):
         """Update the extraction button to enabled or disabled based on
         the layer's locked data levels.
         """
-        if self._layers and all(
-            layer.locked_data_level is not None for layer in self._layers
+        locked_levels = {
+            getattr(layer, 'locked_data_level', None) for layer in self._layers
+        }
+        if (
+            bool(self._layers)
+            and None not in locked_levels
+            and len(locked_levels) == 1
         ):
             self.level_extraction_button.setEnabled(True)
             self.level_extraction_button.setToolTip(
@@ -175,7 +180,7 @@ class QtMultiscaleLevelControl(QtWidgetControlsBase):
         else:
             self.level_extraction_button.setEnabled(False)
             self.level_extraction_button.setToolTip(
-                'All selected layers must have a locked resolution to extract level'
+                'All selected layers must have the same locked resolution to extract level'
             )
 
     def _on_locked_data_level_change(self) -> None:

@@ -49,14 +49,15 @@ def _all_multiscale(s: LayerSel) -> bool:
     return bool(s and all(getattr(layer, 'multiscale', False) for layer in s))
 
 
-def _all_multiscale_and_locked_data_levels(s: LayerSel) -> bool:
+def _all_multiscale_and_same_locked_data_levels(s: LayerSel) -> bool:
+    locked_data_levels = {
+        getattr(layer, 'locked_data_level', None)
+        if getattr(layer, 'multiscale', False)
+        else None
+        for layer in s
+    }
     return bool(
-        s
-        and all(
-            getattr(layer, 'multiscale', False)
-            and getattr(layer, 'locked_data_level', None) is not None
-            for layer in s
-        )
+        s and None not in locked_data_levels and len(locked_data_levels) == 1
     )
 
 
@@ -358,10 +359,10 @@ class LayerListSelectionContextKeys(ContextNamespace['LayerSel']):
         'True when all selected layers are multiscale.',
         _all_multiscale,
     )
-    all_selected_layers_multiscale_and_locked_data_level = ContextKey(
+    all_selected_layers_multiscale_and_same_locked_data_level = ContextKey(
         False,
-        'True when all selected layers are multiscale and have locked data level.',
-        _all_multiscale_and_locked_data_levels,
+        'True when all selected layers are multiscale and have the same locked data level.',
+        _all_multiscale_and_same_locked_data_levels,
     )
     all_selected_layers_shapes = ContextKey(
         False,
