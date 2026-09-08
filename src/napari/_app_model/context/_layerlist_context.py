@@ -45,6 +45,21 @@ def _all_linked(s: LayerSel) -> bool:
     return bool(s and all(layer_is_linked(x) for x in s))
 
 
+def _all_multiscale(s: LayerSel) -> bool:
+    return bool(s and all(getattr(layer, 'multiscale', False) for layer in s))
+
+
+def _all_multiscale_and_locked_data_levels(s: LayerSel) -> bool:
+    return bool(
+        s
+        and all(
+            getattr(layer, 'multiscale', False)
+            and getattr(layer, 'locked_data_level', None) is not None
+            for layer in s
+        )
+    )
+
+
 def _n_unselected_links(s: LayerSel) -> int:
     from napari.layers.utils._link_layers import get_linked_layers
 
@@ -337,6 +352,16 @@ class LayerListSelectionContextKeys(ContextNamespace['LayerSel']):
         False,
         'True when all selected layers are labels.',
         _only_labels,
+    )
+    all_selected_layers_multiscale = ContextKey(
+        False,
+        'True when all selected layers are multiscale.',
+        _all_multiscale,
+    )
+    all_selected_layers_multiscale_and_locked_data_level = ContextKey(
+        False,
+        'True when all selected layers are multiscale and have locked data level.',
+        _all_multiscale_and_locked_data_levels,
     )
     all_selected_layers_shapes = ContextKey(
         False,

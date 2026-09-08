@@ -305,8 +305,19 @@ LAYERLIST_CONTEXT_ACTIONS: list[Action] = [
     ),
     Action(
         id='napari.layer.extract_multiscale_level',
-        title='Extract multiscale level',
+        title='Extract locked multiscale level',
         callback=_layer_actions._extract_multiscale_level_from_selection,
+        menus=[
+            {
+                'id': MenuId.LAYERLIST_CONTEXT,
+                'group': MenuGroup.LAYERLIST_CONTEXT.SPLIT_MERGE,
+                'when': LLSCK.all_selected_layers_multiscale,
+            }
+        ],
+        enablement=(
+            LLSCK.all_selected_layers_multiscale_and_locked_data_level
+        ),
+        tooltip='Requires all multiscale layers and locked resolution levels',
     ),
 ]
 
