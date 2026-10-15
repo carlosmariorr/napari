@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from vispy import gloo
 
 from napari._vispy.layers.base import VispyBaseLayer
 from napari._vispy.visuals._graph import _GraphVisual
@@ -49,6 +50,9 @@ class _VispyGraphLayer(VispyBaseLayer):
 
         self.node.edge_markers.visible = len(edges) > 0
         if len(edges) > 0:
+            # Vispy's line position buffer keeps its original coordinate
+            # dimension. Replace it when switching between 2D and 3D data.
+            self.node.edge_markers._line_visual._pos_vbo = gloo.VertexBuffer()
             self.node.edge_markers.set_data(
                 pos=edges,
                 color='white',
