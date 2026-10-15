@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from qtpy.QtWidgets import QFrame, QStackedWidget
 
+from napari._qt.layer_controls._qt_graph_controls import _QtGraphControls
 from napari._qt.layer_controls.dynamic.qt_dynamic_layer_controls import (
     QtDynamicLayerControls,
 )
@@ -23,6 +24,7 @@ from napari.layers import (
     Tracks,
     Vectors,
 )
+from napari.layers._graph._graph import _Graph
 from napari.settings import get_settings
 
 if TYPE_CHECKING:
@@ -34,6 +36,7 @@ if TYPE_CHECKING:
     from napari.utils.events import Event
 
 layer_to_controls: dict[type[Layer], type[QtLayerControls]] = {
+    _Graph: _QtGraphControls,
     Labels: QtLabelsControls,
     Image: QtImageControls,
     Points: QtPointsControls,
