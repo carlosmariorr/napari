@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
+from napari._vispy.layers._graph import _VispyGraphLayer
 from napari._vispy.layers.base import VispyBaseLayer
 from napari._vispy.layers.image import VispyImageLayer
 from napari._vispy.layers.labels import VispyLabelsLayer
@@ -60,11 +61,13 @@ from napari.layers import (
     Tracks,
     Vectors,
 )
+from napari.layers._graph._graph import _Graph
 
 if TYPE_CHECKING:
     from vispy.scene.widgets.viewbox import ViewBox
 
 layer_to_visual: dict[type[Layer], type[VispyBaseLayer]] = {
+    _Graph: _VispyGraphLayer,
     Image: VispyImageLayer,
     Labels: VispyLabelsLayer,
     Points: VispyPointsLayer,
