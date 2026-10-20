@@ -26,7 +26,7 @@ class _VispyGraphLayer(VispyBaseLayer):
         self._on_data_change()
 
     def _on_data_change(self) -> None:
-        graph_slice = self.layer._slicing_state.view
+        graph_slice = self.layer._slicing_state._view
 
         # Nodes are [Node, Coordinates] we need to reverse coordinates from napari zyx to
         # vispy xyz
@@ -64,3 +64,5 @@ class _VispyGraphLayer(VispyBaseLayer):
                 color='white',
                 width=1,
             )
+
+        self.reset()
