@@ -72,8 +72,8 @@ def _slice_graph(
         end = coordinates[node_index[target]]
         direction = end - start
 
-        t_enter = 0.0
-        t_exit = 1.0
+        edge_fraction_enter = 0.0
+        edge_fraction_exit = 1.0
         intersects = True
 
         for axis in not_displayed:
@@ -85,19 +85,30 @@ def _slice_graph(
                     break
                 continue
 
-            t0 = (low[axis] - start[axis]) / direction[axis]
-            t1 = (high[axis] - start[axis]) / direction[axis]
+            # This calculates the intersection to both lower and higher limits
+            # of the not displayed axis. If the intersection is less than 0
+            # or more than 1, then it'll just use the minimum or maximum (0 or 1).
+            # If its inside, it'll calculate the enter and end fractions and flag it
+            # as an intersecting edge
+            intersect_low = (low[axis] - start[axis]) / direction[axis]
+            intersect_high = (high[axis] - start[axis]) / direction[axis]
 
-            t_enter = max(t_enter, min(t0, t1))
-            t_exit = min(t_exit, max(t0, t1))
+            edge_fraction_enter = max(
+                edge_fraction_enter, min(intersect_low, intersect_high)
+            )
+            edge_fraction_exit = min(
+                edge_fraction_exit, max(intersect_low, intersect_high)
+            )
 
-            if t_enter > t_exit:
+            if edge_fraction_enter > edge_fraction_exit:
                 intersects = False
                 break
 
+        # If the edge intersects the rendered volume in the non visible axis,
+        # it calculates the length of the edge based on the enter and exit fractions
         if intersects:
-            clipped_start = start + t_enter * direction
-            clipped_end = start + t_exit * direction
+            clipped_start = start + edge_fraction_enter * direction
+            clipped_end = start + edge_fraction_exit * direction
 
             edge_segments.append(
                 np.stack((clipped_start[displayed], clipped_end[displayed]))
