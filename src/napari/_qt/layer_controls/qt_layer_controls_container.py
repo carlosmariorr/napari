@@ -14,6 +14,7 @@ from napari._qt.layer_controls.qt_shapes_controls import QtShapesControls
 from napari._qt.layer_controls.qt_surface_controls import QtSurfaceControls
 from napari._qt.layer_controls.qt_tracks_controls import QtTracksControls
 from napari._qt.layer_controls.qt_vectors_controls import QtVectorsControls
+from napari._qt.layer_controls._qt_graph_controls import _QtGraphControls
 from napari.layers import (
     Image,
     Labels,
@@ -23,6 +24,7 @@ from napari.layers import (
     Tracks,
     Vectors,
 )
+from napari.layers._graph._graph import _Graph
 from napari.settings import get_settings
 
 if TYPE_CHECKING:
@@ -34,6 +36,7 @@ if TYPE_CHECKING:
     from napari.utils.events import Event
 
 layer_to_controls: dict[type[Layer], type[QtLayerControls]] = {
+    _Graph: _QtGraphControls,
     Labels: QtLabelsControls,
     Image: QtImageControls,
     Points: QtPointsControls,
