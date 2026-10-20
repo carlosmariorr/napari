@@ -29,6 +29,7 @@ class _Graph(Layer):
 
         self._data = graph
         super().__init__(data=graph, ndim=ndim)
+        self.set_view_slice()
 
     @property
     def data(self) -> Graph:
