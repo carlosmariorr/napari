@@ -1,9 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import numpy as np
-from networkx import Graph as nxGraph
 
 from napari.layers._graph._graph_utils import fix_graph_data
 from napari.layers._graph._slice import _GraphSlicingState
 from napari.layers.base import Layer
+
+if TYPE_CHECKING:
+    from networkx import Graph as nxGraph
 
 
 class _Graph(Layer):
