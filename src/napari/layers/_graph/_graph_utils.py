@@ -1,4 +1,9 @@
-from networkx import Graph as nxGraph
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from networkx import Graph as nxGraph
 
 
 def fix_graph_data(
@@ -28,6 +33,13 @@ def fix_graph_data(
     ValueError
         if ndim does not match with the dimensions of the graph nodes
     """
+
+    try:
+        from networkx import Graph as nxGraph
+    except ImportError as e:
+        raise ImportError(
+            'The graph layer requires networkx: pip install networkx'
+        ) from e
 
     if graph is None:
         graph = nxGraph()

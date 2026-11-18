@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
 import numpy as np
-from networkx import Graph
 
 from napari.layers.base import _LayerSlicingState
 from napari.layers.utils._slice_input import _SliceInput, _ThickNDSlice
+
+if TYPE_CHECKING:
+    from networkx import Graph
 
 
 @dataclass
